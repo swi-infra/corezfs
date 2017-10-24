@@ -252,6 +252,8 @@ case "$1" in
 		try "creating ${ARCHIVE} tarball" \
 			tar -zcvf "${ARCHIVE}" -C "${CZ_OVERLAY_DIR}" opt/corezfs/usr -C "${CZ_OVERLAY_DIR}/opt/corezfs" etc
 
+		try "deactivating swap" swapoff ${CZ_BUILD_DIR}/swap
+
 		[ ${debug} ] || try "cleaning up temporary build directories" \
 			rm -rf "${CZ_OVERLAY_DIR}" "${CZ_BUILD_DIR}"
 

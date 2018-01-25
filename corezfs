@@ -243,6 +243,7 @@ case "$1" in
 				--overlay="+/var/lib/portage::/var/lib/portage" \
 				--overlay="/:${CZ_OVERLAY_DIR}/opt/corezfs:/corezfs" \
 				--overlay="/usr:${CZ_OVERLAY_DIR}/opt/corezfs/usr:/corezfs/usr" \
+				--tmpfs="/var/tmp/portage" \
 				--as-pid2 \
 				/corezfs/build-zfs.sh
 

@@ -271,9 +271,16 @@ case "$1" in
 	install)
 		yell "Installing ZFS on Linux (ZoL) for CoreOS ($VERSION)"
 
+		fetch_archive=false
 		if ! [ -r ${ARCHIVE} ]; then
 			yell "no archive file available"
+			fetch_archive=true
+		elif ! tar jtf "${ARCHIVE}"; then
+			yell "archive file ${ARCHIVE} corrupted"
+			fetch_archive=true
+		fi
 
+		if $fetch_archive; then
 			yell "fetching archive ..."
 			if ! wget -O ${ARCHIVE} https://raw.githubusercontent.com/swi-infra/corezfs-bin/${COREOS_RELEASE_VERSION}/${ARCHIVE}; then
 				yell "Unable to fetch ${ARCHIVE}"

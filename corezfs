@@ -13,11 +13,22 @@ try() { yell ${1}; shift; "$@" || die "ERROR executing: $*"; }
 ZFS_VERSION=${ZFS_VERSION#zfs-}
 yell "building ZFS on Linux v${ZFS_VERSION}"
 
-. /usr/share/coreos/release
-. /usr/share/coreos/update.conf
+if [ -e "/usr/share/coreos/release" ]; then
+    yell "building on CoreOS"
+    . /usr/share/coreos/release
+    . /usr/share/coreos/update.conf
+else
+    COREOS_VERSION="${COREOS_VERSION:-current}"
+    GROUP="${COREOS_GROUP:-stable}"
+    COREOS_RELEASE_BOARD="${COREOS_RELEASE_BOARD:-"amd64-usr"}"
+    wget -q -O /tmp/coreos_version.txt https://${GROUP}.release.core-os.net/${COREOS_RELEASE_BOARD}/${COREOS_VERSION}/version.txt
+    . /tmp/coreos_version.txt
+    COREOS_RELEASE_VERSION="${COREOS_VERSION}"
+fi
 
+yell "building for CoreOS ${COREOS_RELEASE_VERSION}"
 VERSION="${COREOS_RELEASE_BOARD}_${COREOS_RELEASE_VERSION}_${GROUP:=stable}"
-ARCHIVE="corezfs_${VERSION}.tar.gz"
+ARCHIVE="corezfs_${VERSION}_zfs${ZFS_VERSION}.tar.gz"
 
 read -d '' help_message <<-EOF
 
@@ -32,7 +43,7 @@ read -d '' help_message <<-EOF
 
 	Options:
 	    -h ) echo this help file to stdout
-	    -v ) echo corezfs version to stdout	
+	    -v ) echo corezfs version to stdout
 
 	The build command will build zfs and create the archive file which is an
 	overlay for the "/usr" filesystem. The default archive_file is

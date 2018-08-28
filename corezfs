@@ -97,9 +97,9 @@ read -d '' build_script <<-'EOF'
 	
 	try "copying /proc/config.gz to /usr/src/linux/.config" \
 		gzip -cd /proc/config.gz > /usr/src/linux/.config
-	
-	try "preparing modules" \
-		make -C /usr/src/linux modules_prepare
+
+	try "emerging coreos-modules" \
+		emerge -v coreos-modules
 
 	try "creating /usr/local/portage/sys-fs/{zfs,spl}" \
 		mkdir -p /usr/local/portage/{metadata,profiles,sys-fs/{zfs,spl}}
@@ -150,7 +150,8 @@ read -d '' build_script <<-'EOF'
 			econf \
 				--disable-sysvinit \
 				--with-systemdunitdir=/etc/systemd/system \
-				--with-systemdpresetdir=/etc/systemd/system-preset
+				--with-systemdpresetdir=/etc/systemd/system-preset \
+				--with-linux=/usr/src/linux
 		}
 	EOF2
 

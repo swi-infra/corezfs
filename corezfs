@@ -105,9 +105,6 @@ read -d '' build_script <<-'EOF'
 
 	try "emerging coreos-sources" \
 		emerge -v coreos-sources
-	
-	try "copying /proc/config.gz to /usr/src/linux/.config" \
-		gzip -cd /proc/config.gz > /usr/src/linux/.config
 
 	try "emerging coreos-modules" \
 		emerge -v coreos-modules
@@ -238,6 +235,14 @@ case "$1" in
 				bunzip2 -fv "${CZ_BUILD_DIR}/${DEVENV}.bz2" > "${CZ_BUILD_DIR}/${DEVENV}"
 		fi
 
+		if [ "$(systemd-nspawn --version | grep systemd | awk '{print $2}')" -gt 230 ]; then
+			EPHEMERAL_OPT="--ephemeral"
+		else
+			cp "${CZ_BUILD_DIR}/${DEVENV}" "${CZ_BUILD_DIR}/${DEVENV}.tmp"
+			DEVENV="${DEVENV}.tmp"
+			EPHEMERAL_OPT=""
+		fi
+
 		try "allocating swap file" fallocate -l 1024m ${CZ_BUILD_DIR}/swap
 		trap "{ swapoff ${CZ_BUILD_DIR}/swap; rm ${CZ_BUILD_DIR}/swap; }" EXIT
 		try "setting swap file permissions" chmod 600 ${CZ_BUILD_DIR}/swap
@@ -247,16 +252,15 @@ case "$1" in
 		try "launching development container" \
 			systemd-nspawn \
 				--image="${CZ_BUILD_DIR}/${DEVENV}" \
-				--ephemeral \
+				${EPHEMERAL_OPT} \
 				--setenv="debug=${debug}" \
 				--setenv="ZFS_VERSION=${ZFS_VERSION}" \
 				--setenv="CZ_SPLREPO=${CZ_SPLREPO:=https://api.github.com/repos/zfsonlinux/spl/tarball}" \
 				--setenv="CZ_ZFSREPO=${CZ_ZFSREPO:=https://api.github.com/repos/zfsonlinux/zfs/tarball}" \
 				--bind="${CZ_BUILD_DIR}/tmp:/var/tmp/portage" \
-				--overlay="+/var/lib/portage::/var/lib/portage" \
+				--bind="${CZ_BUILD_DIR}/lib:/var/lib/portage" \
 				--overlay="/:${CZ_OVERLAY_DIR}/opt/corezfs:/corezfs" \
 				--overlay="/usr:${CZ_OVERLAY_DIR}/opt/corezfs/usr:/corezfs/usr" \
-				--tmpfs="/var/tmp/portage" \
 				--as-pid2 \
 				/corezfs/build-zfs.sh
 

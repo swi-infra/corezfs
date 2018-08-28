@@ -1,5 +1,7 @@
 # corezfs
 
+![Build Status](https://travis-ci.org/swi-infra/corezfs.svg)
+
 ## ZFS on CoreOS
 This is a script to compile and install ZFS on CoreOS. It is meant to be installed on a fresh clean CoreOS instance. Although it can be run manually, it is envisioned that it is typically used as part of an automated provisioning process.
 

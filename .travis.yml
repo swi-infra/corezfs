@@ -1,0 +1,8 @@
+dist: xenial
+
+install:
+    - sudo apt-get -qq update
+    - sudo apt-get --yes --assume-yes install build-essential systemd-container
+
+script:
+    - sudo ./corezfs build

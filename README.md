@@ -39,13 +39,13 @@ Hopefully this script will allow more people to experiment with ZFS on CoreOS to
 ## References
 This script is adapted from the instructions from:
 
-1. https://coreos.com/os/docs/latest/kernel-modules.html  
+1. https://coreos.com/os/docs/latest/kernel-modules.html
 2. https://github.com/zfsonlinux/zfs/wiki/Building-ZFS
 
 ## Issues
 
-1. This should really be baked into CoreOS (so hopefully this script is just a temporary stop-gap solution until the CoreOS developers include ZFS support natively)  
-2. It is uncertain whether the kernel drivers will continue to work after a CoreOS update, or whether the script needs to be re-run to re-build them (further support for why it should be baked into CoreOS). It is recommended to turn off CoreOS automatic updates to ensure that an automatic update does not result an incompatibility with the kernel drivers.  
+1. This should really be baked into CoreOS (so hopefully this script is just a temporary stop-gap solution until the CoreOS developers include ZFS support natively)
+2. It is uncertain whether the kernel drivers will continue to work after a CoreOS update, or whether the script needs to be re-run to re-build them (further support for why it should be baked into CoreOS). It is recommended to turn off CoreOS automatic updates to ensure that an automatic update does not result an incompatibility with the kernel drivers.
 	
 ## Using ZFS
 
